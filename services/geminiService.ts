@@ -1,6 +1,6 @@
 import { AnalysisResult } from '../types';
 
-export async function analyzeXrayImage(base64Image: string, mimeType: string): Promise<AnalysisResult> {
+export async function getAiAnalysis(base64Image: string, mimeType: string): Promise<AnalysisResult> {
   try {
     const response = await fetch('/api/analyze', {
       method: 'POST',

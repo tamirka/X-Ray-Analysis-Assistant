@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { AppStep, AnalysisResult } from './types';
-import { analyzeXrayImage } from './services/geminiService';
+import { getAiAnalysis } from './services/geminiService';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import UploadStep from './components/UploadStep';
@@ -40,7 +40,7 @@ const App: React.FC = () => {
       const base64Image = await fileToBase64(imageFile);
       const mimeType = imageFile.type;
       
-      const result = await analyzeXrayImage(base64Image, mimeType);
+      const result = await getAiAnalysis(base64Image, mimeType);
       setAnalysisResult(result);
       setStep(AppStep.Result);
     } catch (err) {
