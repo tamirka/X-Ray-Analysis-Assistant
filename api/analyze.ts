@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import { APIError } from 'openai';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { AnalysisResult } from '../types';
 
@@ -31,7 +32,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   
   const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
   if (!OPENAI_API_KEY) {
-    return res.status(500).json({ error: "OPENAI_API_KEY environment variable is not set on the server." });
+    return res.status(500).json({ error: "Server is not configured for AI analysis." });
   }
   
   const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
@@ -39,7 +40,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { base64Image, mimeType } = req.body;
 
   if (!base64Image || !mimeType) {
-    return res.status(400).json({ error: 'Missing base64Image or mimeType in request body.' });
+    return res.status(400).json({ error: 'Missing image data in request.' });
   }
 
   const model = 'gpt-4o';
@@ -94,8 +95,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.status(200).json(result);
 
   } catch (error: any) {
-    console.error("Error calling OpenAI API:", error);
-    const errorMessage = error.message || "Failed to get a valid analysis from the AI. The model may be unable to process this image.";
-    res.status(500).json({ error: errorMessage });
+    console.error("Error processing analysis request:", error);
+
+    if (error instanceof APIError) {
+      const errorMessage = error.message || "The AI analysis service reported an error.";
+      return res.status(error.status || 500).json({ error: errorMessage });
+    }
+    if (error instanceof SyntaxError) {
+        return res.status(500).json({ error: "The AI model returned a malformed response. Please try again." });
+    }
+    if (error instanceof Error) {
+      return res.status(500).json({ error: error.message });
+    }
+    return res.status(500).json({ error: "An unknown server error occurred." });
   }
 }

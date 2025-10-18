@@ -67,7 +67,37 @@ const ResultDisplay: React.FC<{ result: AnalysisResult; onReset: () => void, onB
     </div>
 );
 
-const AnalysisStep: React.FC<AnalysisStepProps> = ({ isLoading, analysisResult, onReset, onBookAppointment }) => {
+const ErrorIcon: React.FC<{className?: string}> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+    </svg>
+);
+
+const ErrorDisplay: React.FC<{ error: string; onReset: () => void; }> = ({ error, onReset }) => (
+    <div className="bg-white p-8 rounded-xl shadow-lg border border-red-200 flex flex-col items-center text-center animate-fade-in">
+        <div className="flex items-center justify-center h-16 w-16 rounded-full bg-red-100">
+            <ErrorIcon className="h-8 w-8 text-red-600"/>
+        </div>
+        <h2 className="text-2xl font-bold text-slate-800 mt-6">An Error Occurred</h2>
+        <p className="text-slate-600 mt-2 bg-red-50 p-4 rounded-md w-full">
+          {error}
+        </p>
+        <button
+            onClick={onReset}
+            className="mt-8 w-full py-3 px-6 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition-colors"
+        >
+            Try Again
+        </button>
+    </div>
+);
+
+const AnalysisStep: React.FC<AnalysisStepProps> = ({ isLoading, analysisResult, error, onReset, onBookAppointment }) => {
+  if (error) {
+    return <ErrorDisplay error={error} onReset={onReset} />;
+  }
+  
   if (isLoading) {
     return <LoadingState />;
   }
@@ -76,14 +106,8 @@ const AnalysisStep: React.FC<AnalysisStepProps> = ({ isLoading, analysisResult, 
     return <ResultDisplay result={analysisResult} onReset={onReset} onBookAppointment={onBookAppointment} />;
   }
 
-  // Fallback for when not loading and no result (should not happen in normal flow, but good for robustness)
-  return (
-     <div className="bg-white p-8 rounded-xl shadow-lg border border-slate-200 text-center">
-       <h2 className="text-xl font-bold text-red-600">Something went wrong.</h2>
-       <p className="text-slate-600 mt-2">Could not display analysis results.</p>
-       <button onClick={onReset} className="mt-4 py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg">Start Over</button>
-    </div>
-  );
+  // Fallback for when not loading, no result, and no error
+  return <ErrorDisplay error="Could not display analysis results. An unexpected error occurred." onReset={onReset} />;
 };
 
 export default AnalysisStep;

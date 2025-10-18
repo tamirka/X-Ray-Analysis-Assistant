@@ -9,6 +9,9 @@ import Disclaimer from './components/Disclaimer';
 import { fileToBase64 } from './utils/fileUtils';
 import BookingModal from './components/BookingModal';
 
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
 const App: React.FC = () => {
   const [step, setStep] = useState<AppStep>(AppStep.Upload);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -20,9 +23,24 @@ const App: React.FC = () => {
 
   const handleImageChange = (file: File | null) => {
     if (file) {
+      setError(null); // Clear previous errors on new file selection
+
+      if (!ALLOWED_MIME_TYPES.includes(file.type)) {
+        setError("Invalid file type. Please upload a PNG, JPG, or WEBP image.");
+        setImageFile(null);
+        setPreviewUrl(null);
+        return;
+      }
+
+      if (file.size > MAX_FILE_SIZE) {
+        setError(`File is too large. Please upload an image smaller than ${MAX_FILE_SIZE / 1024 / 1024}MB.`);
+        setImageFile(null);
+        setPreviewUrl(null);
+        return;
+      }
+      
       setImageFile(file);
       setPreviewUrl(URL.createObjectURL(file));
-      setError(null);
     }
   };
 
@@ -34,6 +52,7 @@ const App: React.FC = () => {
 
     setIsLoading(true);
     setError(null);
+    setAnalysisResult(null);
     setStep(AppStep.Analyzing);
     
     try {
@@ -46,8 +65,8 @@ const App: React.FC = () => {
     } catch (err) {
       console.error(err);
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred during analysis.';
-      setError(`Analysis failed: ${errorMessage}. Please try again or use a different image.`);
-      setStep(AppStep.Upload); // Go back to upload step on error
+      setError(`Analysis failed. ${errorMessage}`);
+      setStep(AppStep.Result); // Go to result step to display the error
     } finally {
       setIsLoading(false);
     }
@@ -110,7 +129,7 @@ const App: React.FC = () => {
       <main className="flex-grow container mx-auto px-4 py-8 md:py-12 flex items-center justify-center">
         <div className="w-full max-w-3xl">
           {renderStep()}
-          {step === AppStep.Result && <Disclaimer />}
+          {step === AppStep.Result && !error && <Disclaimer />}
         </div>
       </main>
       <Footer />
