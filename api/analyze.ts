@@ -75,6 +75,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       },
     });
 
+    if (!response.text) {
+      throw new Error("Received an empty response from the AI model.");
+    }
+
     const jsonText = response.text.trim();
     const result = JSON.parse(jsonText) as AnalysisResult;
     
