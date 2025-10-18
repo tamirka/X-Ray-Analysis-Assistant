@@ -2,27 +2,11 @@ import React from 'react';
 import { AnalysisResult } from '../types';
 
 interface AnalysisStepProps {
-  isLoading: boolean;
   analysisResult: AnalysisResult | null;
   error: string | null;
   onReset: () => void;
   onBookAppointment: () => void;
 }
-
-const LoadingState: React.FC = () => (
-  <div className="bg-white p-8 rounded-xl shadow-lg border border-slate-200 flex flex-col items-center text-center">
-    <div className="animate-pulse">
-        <div className="w-16 h-16 bg-blue-200 rounded-full"></div>
-    </div>
-    <h2 className="text-2xl font-bold text-slate-800 mt-6">Analyzing Your X-Ray...</h2>
-    <p className="text-slate-600 mt-2">
-      Our AI assistant is carefully examining your image. This may take a few moments.
-    </p>
-    <div className="w-full bg-slate-200 rounded-full h-2.5 mt-8">
-      <div className="bg-blue-600 h-2.5 rounded-full animate-pulse" style={{width: '75%'}}></div>
-    </div>
-  </div>
-);
 
 const ResultDisplay: React.FC<{ result: AnalysisResult; onReset: () => void, onBookAppointment: () => void; }> = ({ result, onReset, onBookAppointment }) => (
     <div className="bg-white p-8 rounded-xl shadow-lg border border-slate-200 animate-fade-in">
@@ -93,15 +77,11 @@ const ErrorDisplay: React.FC<{ error: string; onReset: () => void; }> = ({ error
     </div>
 );
 
-const AnalysisStep: React.FC<AnalysisStepProps> = ({ isLoading, analysisResult, error, onReset, onBookAppointment }) => {
+const AnalysisStep: React.FC<AnalysisStepProps> = ({ analysisResult, error, onReset, onBookAppointment }) => {
   if (error) {
     return <ErrorDisplay error={error} onReset={onReset} />;
   }
   
-  if (isLoading) {
-    return <LoadingState />;
-  }
-
   if (analysisResult) {
     return <ResultDisplay result={analysisResult} onReset={onReset} onBookAppointment={onBookAppointment} />;
   }

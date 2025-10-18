@@ -1,7 +1,6 @@
 
 export enum AppStep {
   Upload = 'UPLOAD',
-  Analyzing = 'ANALYZING',
   Result = 'RESULT',
 }
 

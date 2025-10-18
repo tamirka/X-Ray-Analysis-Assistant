@@ -53,7 +53,6 @@ const App: React.FC = () => {
     setIsLoading(true);
     setError(null);
     setAnalysisResult(null);
-    setStep(AppStep.Analyzing);
     
     try {
       const base64Image = await fileToBase64(imageFile);
@@ -98,20 +97,9 @@ const App: React.FC = () => {
             hasImage={!!imageFile}
           />
         );
-      case AppStep.Analyzing:
-        return (
-          <AnalysisStep
-            isLoading={true}
-            analysisResult={null}
-            error={null}
-            onReset={handleReset}
-            onBookAppointment={handleOpenBookingModal}
-          />
-        );
       case AppStep.Result:
         return (
            <AnalysisStep
-            isLoading={false}
             analysisResult={analysisResult}
             error={error}
             onReset={handleReset}

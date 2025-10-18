@@ -1,4 +1,3 @@
-
 import React, { useRef } from 'react';
 
 interface UploadStepProps {
@@ -16,6 +15,21 @@ const UploadIcon: React.FC<{className?: string}> = ({ className }) => (
         <polyline points="17 8 12 3 7 8"/>
         <line x1="12" y1="3" x2="12" y2="15"/>
     </svg>
+);
+
+const LoadingState: React.FC = () => (
+  <div className="bg-white p-8 rounded-xl shadow-lg border border-slate-200 flex flex-col items-center text-center">
+    <div className="animate-pulse">
+        <div className="w-16 h-16 bg-blue-200 rounded-full"></div>
+    </div>
+    <h2 className="text-2xl font-bold text-slate-800 mt-6">Analyzing Your X-Ray...</h2>
+    <p className="text-slate-600 mt-2">
+      Our AI assistant is carefully examining your image. This may take a few moments.
+    </p>
+    <div className="w-full bg-slate-200 rounded-full h-2.5 mt-8">
+      <div className="bg-blue-600 h-2.5 rounded-full animate-pulse" style={{width: '75%'}}></div>
+    </div>
+  </div>
 );
 
 const UploadStep: React.FC<UploadStepProps> = ({ onImageChange, onAnalyze, previewUrl, error, isAnalyzing, hasImage }) => {
@@ -43,6 +57,10 @@ const UploadStep: React.FC<UploadStepProps> = ({ onImageChange, onAnalyze, previ
   const handleClick = () => {
     inputRef.current?.click();
   };
+  
+  if (isAnalyzing) {
+    return <LoadingState />;
+  }
 
   return (
     <div className="bg-white p-8 rounded-xl shadow-lg border border-slate-200 flex flex-col items-center transition-all duration-300">
