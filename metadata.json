@@ -1,0 +1,5 @@
+{
+  "name": "X-Ray Analysis Assistant",
+  "description": "An AI-powered application for preliminary analysis of X-ray images. Patients can upload their X-rays to receive an initial assessment and guidance on next steps, such as booking a consultation.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,8 @@
+{
+  "name": "x-ray-analysis-assistant",
+  "version": "1.0.0",
+  "description": "An AI-powered application for preliminary analysis of X-ray images. Patients can upload their X-rays to receive an initial assessment and guidance on next steps, such as booking a consultation.",
+  "dependencies": {
+    "@google/genai": "^1.24.0"
+  }
+}
