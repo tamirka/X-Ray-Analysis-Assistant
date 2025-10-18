@@ -1,7 +1,13 @@
 import OpenAI from 'openai';
 import { APIError } from 'openai';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { AnalysisResult } from '../types';
+
+// Define types locally to make the serverless function self-contained
+export interface AnalysisResult {
+  findings: string[];
+  potentialIssues: string[];
+  recommendation: string;
+}
 
 const analysisSchema = {
   type: "object",
